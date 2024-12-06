@@ -5,7 +5,8 @@ This project provides a script to scan Docker images for vulnerabilities using T
 ## Usage
 
 1. **Prepare the Docker Images List**:
-   - Add the Docker image names you want to scan to `docker_images.txt`, one per line.
+   - Create a text file named `docker_images.txt` in the same directory as the script.
+   - Add the Docker image names you want to scan to the `docker_images.txt` file, one per line.
 
 2. **Run the Script**:
    - Execute the `scan_vulnerabilities.py` script to start the scanning process.
