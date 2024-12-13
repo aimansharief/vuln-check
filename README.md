@@ -1,6 +1,6 @@
-# Vulnerability Scanning with Trivy
+# Docker Image Vulnerability Scanner
 
-This project provides a script to scan Docker images for vulnerabilities using Trivy, a comprehensive and easy-to-use vulnerability scanner for containers.
+This project provides a comprehensive solution for scanning Docker images for vulnerabilities using Trivy and generating detailed reports in both JSON and CSV formats.
 
 ## Usage
 
