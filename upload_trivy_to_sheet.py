@@ -2,16 +2,14 @@ import json
 import csv
 import os
 import re
+import pandas as pd
 
-# Load JSON data
-with open("vul.json", "r") as file:
+with open("vulnerabilities.json", "r") as file:
     data = json.load(file)
 
-# Extract results from jsonResults
 results = data.get("jsonResults", [])
 
-# Define headers
-headers = ["Image","Library", "Vulnerability ID", "Severity", "Status", "Installed Version", "Fixed Version", "Title"]
+headers = ["Image", "Target", "Library", "Vulnerability ID", "Severity", "Status", "Installed Version", "Fixed Version", "Title"]
 
 def sanitize_filename(name):
     """
@@ -22,50 +20,38 @@ def sanitize_filename(name):
     sanitized = re.sub(r'[<>:"/\\|?*]', '_', name)
     # Remove leading/trailing spaces and periods
     sanitized = sanitized.strip('. ')
-    # Limit filename length if needed
     return sanitized[:255]
 
 # Create a single directory to store all CSV files
 base_directory = os.path.join(os.getcwd(), "vulnerability_reports")
 os.makedirs(base_directory, exist_ok=True)
 
-# Iterate through each result and create or append to CSV files for relevant Targets
 for result in results:
     artifact_name = result.get("ArtifactName", "unknown_artifact")
 
     # Sanitize artifact name for filename
     sanitized_artifact_name = sanitize_filename(artifact_name)
-
-    # Create CSV filename in the base directory
     csv_filename = os.path.join(base_directory, f"{sanitized_artifact_name}.csv")
-
-    # Check if file exists to determine if headers need to be written
     file_exists = os.path.isfile(csv_filename)
 
     with open(csv_filename, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
 
-        # Write headers only if the file is new
         if not file_exists:
             writer.writerow(headers)
 
         for entry in result.get("Results", []):
             target = entry.get("Target", "Unknown")
 
-            # Consider only targets with Java, Python, or Node.js
-            if not any(lang in target for lang in ["Java", "Python", "Node.js"]):
-                continue
-
-            # Get vulnerabilities from the current Results entry
             vulnerabilities = entry.get("Vulnerabilities", [])
 
             if not vulnerabilities:
                 continue
 
-            # Write vulnerability details
             for vuln in vulnerabilities:
                 writer.writerow([
                     artifact_name,
+                    target,
                     vuln.get("PkgName", ""),
                     vuln.get("VulnerabilityID", ""),
                     vuln.get("Severity", ""),
@@ -76,3 +62,18 @@ for result in results:
                 ])
 
         print(f"Added vulnerability report for {artifact_name} to {csv_filename}")
+
+def merge_csv_files(directory_path, output_file="merged_vulnerabilities.csv"):
+    dataframes = []
+
+    for file in os.listdir(directory_path):
+        if file.endswith(".csv"):
+            file_path = os.path.join(directory_path, file)
+            df = pd.read_csv(file_path)
+            dataframes.append(df)
+    merged_df = pd.concat(dataframes, ignore_index=True)
+
+    merged_df.to_csv(output_file, index=False)
+    print(f"Merged CSV saved to {output_file}")
+
+merge_csv_files(base_directory)
