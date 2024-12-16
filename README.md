@@ -6,6 +6,12 @@ This project provides a comprehensive solution for scanning Docker images for vu
 
 1. **Prepare the Docker Images List**:
    - Add the Docker image names you want to scan to the `docker_images.txt` file, one per line.
+   Example: 
+   ```
+   docker.io/bitnami/redis:7.4.1
+   docker.io/grafana/grafana:11.4.0
+   docker.io/library/busybox:1.31.1
+   ```
 
 2. **Run the Script**:
    - Execute the `scan_vulnerabilities.py` script to start the scanning process.
