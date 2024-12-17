@@ -4,7 +4,19 @@ This project provides a comprehensive solution for scanning Docker images for vu
 
 ## Usage
 
-1. **Prepare the Docker Images List**:
+1. **Docker Registry Login**:
+   - Before scanning, make sure you're logged into the required Docker registries:
+     ```bash
+     # For Docker Hub
+     docker login
+     
+     # For private registries (like Azure Container Registry)
+     docker login <registry-url>
+     # Example: docker login sunbirded.azurecr.io
+     ```
+   - This step is essential for accessing private repositories and avoiding rate limits
+
+2. **Prepare the Docker Images List**:
    - Add the Docker image names you want to scan to the `docker_images.txt` file, one per line.
    Example: 
    ```
@@ -13,7 +25,7 @@ This project provides a comprehensive solution for scanning Docker images for vu
    docker.io/library/busybox:1.31.1
    ```
 
-2. **Run the Script**:
+3. **Run the Script**:
    - Execute the `scan_vulnerabilities.py` script to start the scanning process.
      ```bash
      python scan_vulnerabilities.py
@@ -23,7 +35,7 @@ This project provides a comprehensive solution for scanning Docker images for vu
      python upload_trivy_to_sheet.py
      ```
 
-3. **Cleanup Before Re-scanning**:
+4. **Cleanup Before Re-scanning**:
    - Before running a new scan, make sure to remove the previous scan results:
      ```bash
      rm vulnerabilities.json           # Remove the JSON results file
@@ -35,6 +47,7 @@ This project provides a comprehensive solution for scanning Docker images for vu
 
 - Python 3.x
 - Trivy installed and accessible in your system's PATH.
+- Docker CLI installed and configured
 
 ## Setup
 
